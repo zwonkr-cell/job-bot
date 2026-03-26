@@ -1,0 +1,36 @@
+name: Job Alert Bot
+
+on:
+  schedule:
+    - cron: '0 * * * *' # 매시간 정각 실행 (UTC 기준)
+  workflow_dispatch: # 직접 실행해볼 수 있는 버튼 생성
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # 파일 수정을 위한 권한
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run Bot
+        env:
+          TG_TOKEN: ${{ secrets.TG_TOKEN }}
+          TG_CHAT_ID: ${{ secrets.TG_CHAT_ID }}
+        run: python job_bot.py
+
+      - name: Update DB
+        run: |
+          git config --global user.name 'github-actions'
+          git config --global user.email 'github-actions@github.com'
+          git add processed_ids.txt
+          git commit -m "Update processed IDs" || exit 0
+          git push
