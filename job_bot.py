@@ -74,11 +74,11 @@ if __name__ == "__main__":
         if job['id'] not in processed_ids:
             # HTML 태그를 사용한 깔끔한 포맷
             message = (
-                f"<b>{job['company']}</b> - <b>{job['title']}</b> 신규 업데이트 노티\n\n"
+                f"<b>{job['company']}</b> - <b>{job['title']}</b>\n\n"
                 f"• {job['company']}\n"
-                f"• <a href='{job['link']}'><b>{job['title']}</b></a>\n"
-                f"• {job['deadline']}\n\n"
-                f"reg_time {job['reg_time']}"
+                f"• <a href='{job['link']}'><b>{job['title']}</b></a>\n\n"
+                f"⏳ {job['deadline']}\n"
+                f"본 공고는 {job['reg_time']}됐어요"
             )
             send_telegram(message)
             new_id_list.append(job['id'])
