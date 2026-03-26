@@ -12,7 +12,7 @@ TARGET_URL = "https://www.jobkorea.co.kr/Theme/TemplateFreeGnoList/entry-level-i
 HEADERS = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
     'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
-    'Accept-Language': 'ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7',
+    'Accept-Language': 'ko-KR,ko;q=0.9',
     'Referer': 'https://www.jobkorea.co.kr/',
 }
 
@@ -22,7 +22,6 @@ def get_jobs():
         try:
             print(f"{attempt + 1}번째 접속 시도 중...")
             response = session.get(TARGET_URL, headers=HEADERS, timeout=40)
-            
             if response.status_code == 200:
                 soup = BeautifulSoup(response.text, 'html.parser')
                 job_list = []
@@ -32,84 +31,64 @@ def get_jobs():
                     try:
                         scrap_btn = item.select_one('.devAddScrap')
                         job_id = scrap_btn['data-gno']
-                        
                         company = item.select_one('.tplCo a.link').get_text(strip=True)
                         
                         title_tag = item.select_one('.tplTit .titBx strong a')
                         title = title_tag.get_text(strip=True)
-                        link = "https://www.jobkorea.co.kr" + title_tag['href']
+                        # 마크다운 문법 오류 방지를 위해 특수문자 제거
+                        safe_title = title.replace('[', '(').replace(']', ')').replace('*', '')
                         
-                        # 마감일 정보
+                        link = "https://www.jobkorea.co.kr" + title_tag['href']
                         deadline = item.select_one('.odd .date.dotum').get_text(strip=True)
                         
-                        # 등록일시 정보 (방금 전, 9시간 전 등)
                         reg_time_tag = item.select_one('.odd .time.dotum')
-                        reg_time = reg_time_tag.get_text(strip=True) if reg_time_tag else "시간 정보 없음"
+                        reg_time = reg_time_tag.get_text(strip=True) if reg_time_tag else "정보 없음"
                         
                         job_list.append({
-                            'id': job_id,
-                            'company': company,
-                            'title': title,
-                            'link': link,
-                            'deadline': deadline,
-                            'reg_time': reg_time
+                            'id': job_id, 'company': company, 'title': safe_title, 'link': link, 'deadline': deadline, 'reg_time': reg_time
                         })
-                    except Exception:
-                        continue
+                    except: continue
                 return job_list
-            else:
-                print(f"상태 코드 이상: {response.status_code}")
         except Exception as e:
-            print(f"접속 실패: {e}")
-        
-        time.sleep(random.uniform(10, 20))
+            print(f"에러: {e}")
+        time.sleep(10)
     return []
 
 def send_telegram(msg):
-    try:
-        url = f"https://api.telegram.org/bot{TG_TOKEN}/sendMessage"
-        data = {
-            "chat_id": TG_CHAT_ID, 
-            "text": msg, 
-            "parse_mode": "Markdown",
-            "disable_web_page_preview": True # 썸네일(미리보기) 제거 설정
-        }
-        requests.post(url, data=data, timeout=10)
-    except:
-        pass
+    url = f"https://api.telegram.org/bot{TG_TOKEN}/sendMessage"
+    # 마크다운 파싱 오류를 줄이기 위해 HTML 모드 대신 Markdown 모드를 사용하며 미리보기를 끕니다.
+    data = {
+        "chat_id": TG_CHAT_ID, 
+        "text": msg, 
+        "parse_mode": "Markdown", 
+        "disable_web_page_preview": True
+    }
+    requests.post(url, data=data, timeout=10)
 
 if __name__ == "__main__":
     jobs = get_jobs()
-    
-    if jobs:
-        db_file = "processed_ids.txt"
-        if os.path.exists(db_file):
-            with open(db_file, "r") as f:
-                processed_ids = f.read().splitlines()
-        else:
-            processed_ids = []
+    db_file = "processed_ids.txt"
+    processed_ids = open(db_file, "r").read().splitlines() if os.path.exists(db_file) else []
 
-        new_count = 0
-        new_id_list = []
-        
-        for job in jobs:
-            if job['id'] not in processed_ids:
-                # 재원님이 요청하신 새로운 메시지 포맷 적용
-                message = (
-                    f"*필터링 채용공고 노티*\n\n"
-                    f"- 회사명 : {job['company']}\n"
-                    f"- 공고명 : [*{job['title']}*]({job['link']})\n"
-                    f"- 마감일 : {job['deadline']}\n\n"
-                    f"{job['reg_time']}"
-                )
-                send_telegram(message)
-                new_id_list.append(job['id'])
-                new_count += 1
-                time.sleep(1.2)
-        
-        updated_ids = (new_id_list + processed_ids)[:200]
-        with open(db_file, "w") as f:
-            f.write("\n".join(updated_ids))
-        print(f"전송 완료: {new_count}개")
-    else:
-        print("데이터를 가져오지 못했습니다.")
+    new_count = 0
+    new_id_list = []
+    
+    # 공고 리스트를 뒤집어서 최신 것이 가장 나중에 오도록 발송
+    for job in reversed(jobs):
+        if job['id'] not in processed_ids:
+            # 재원님이 요청하신 새로운 메시지 포맷
+            message = (
+                f"*{job['company']}*의 *{job['title']}* 업데이트 노티\n\n"
+                f"• {job['company']}\n"
+                f"• [*{job['title']}*]({job['link']})\n"
+                f"• {job['deadline']}\n\n"
+                f"reg_time {job['reg_time']}"
+            )
+            send_telegram(message)
+            new_id_list.append(job['id'])
+            new_count += 1
+            time.sleep(1.2)
+
+    with open(db_file, "w") as f:
+        f.write("\n".join((new_id_list + processed_ids)[:200]))
+    print(f"완료: {new_count}개 발송")
