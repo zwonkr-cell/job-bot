@@ -1,6 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 import os
+import re
 import time
 import random
 
@@ -51,16 +52,19 @@ def get_jobs():
 
 def send_telegram(msg):
     url = f"https://api.telegram.org/bot{TG_TOKEN}/sendMessage"
-    # HTML 모드를 사용하여 특수문자 충돌을 방지합니다.
-    data = {
-        "chat_id": TG_CHAT_ID, 
-        "text": msg, 
-        "parse_mode": "HTML", 
-        "disable_web_page_preview": True
-    }
-    res = requests.post(url, data=data, timeout=10)
-    if res.status_code != 200:
-        print(f"전송 실패 사유: {res.text}")
+    # TG_CHAT_ID 에 콤마/공백으로 여러 명을 넣을 수 있습니다. (예: "8755814064,8467039744")
+    chat_ids = [c for c in re.split(r"[,\s]+", TG_CHAT_ID or "") if c]
+    for cid in chat_ids:
+        # HTML 모드를 사용하여 특수문자 충돌을 방지합니다.
+        data = {
+            "chat_id": cid,
+            "text": msg,
+            "parse_mode": "HTML",
+            "disable_web_page_preview": True
+        }
+        res = requests.post(url, data=data, timeout=10)
+        if res.status_code != 200:
+            print(f"전송 실패 (chat_id={cid}): {res.text}")
 
 if __name__ == "__main__":
     jobs = get_jobs()
