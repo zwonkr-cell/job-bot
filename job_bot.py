@@ -2,6 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 import os
 import re
+import html
 import time
 import random
 
@@ -76,13 +77,19 @@ if __name__ == "__main__":
     
     for job in reversed(jobs):
         if job['id'] not in processed_ids:
+            # 공고명/회사명에 <, >, & 가 있어도 메시지가 깨지지 않도록 이스케이프
+            c = html.escape(job['company'])
+            t = html.escape(job['title'])
+            lk = html.escape(job['link'])
+            dl = html.escape(job['deadline'])
+            rt = html.escape(job['reg_time'])
             # HTML 태그를 사용한 깔끔한 포맷
             message = (
-                f"<b>{job['company']}</b> - <b>{job['title']}</b>\n\n"
-                f"• {job['company']}\n"
-                f"• <a href='{job['link']}'><b>{job['title']}</b></a>\n\n"
-                f"⏳ {job['deadline']}\n"
-                f"본 공고는 {job['reg_time']}됐어요"
+                f"<b>{c}</b> - <b>{t}</b>\n\n"
+                f"• {c}\n"
+                f"• <a href='{lk}'><b>{t}</b></a>\n\n"
+                f"⏳ {dl}\n"
+                f"본 공고는 {rt}됐어요"
             )
             send_telegram(message)
             new_id_list.append(job['id'])
