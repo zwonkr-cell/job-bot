@@ -2,14 +2,6 @@
   "report_initialized": true,
   "sent_log": [
     {
-      "company": "어썸이엔티",
-      "at": "2026-07-13 17:20:09"
-    },
-    {
-      "company": "구찌코리아(유)",
-      "at": "2026-07-13 17:20:11"
-    },
-    {
       "company": "종근당",
       "at": "2026-07-13 21:11:42"
     },
@@ -66,8 +58,8 @@
       "at": "2026-07-15 15:20:56"
     }
   ],
-  "last_activity_at": "2026-07-15 15:20:58",
-  "last_report_date": "2026-07-14",
+  "last_activity_at": "2026-07-15 18:13:22",
+  "last_report_date": "2026-07-15",
   "last_error_sig": "RuntimeError: 잡코리아 접속 5회 모두 실패(사이트 접근 불가)",
   "last_error_at": "2026-07-15 12:25:06"
 }
