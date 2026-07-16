@@ -2,10 +2,6 @@
   "report_initialized": true,
   "sent_log": [
     {
-      "company": "㈜솔데스크",
-      "at": "2026-07-14 14:37:45"
-    },
-    {
       "company": "글링크미디어㈜",
       "at": "2026-07-14 19:51:54"
     },
@@ -52,9 +48,13 @@
     {
       "company": "대림바스㈜",
       "at": "2026-07-16 12:17:24"
+    },
+    {
+      "company": "㈜휴온스메디텍",
+      "at": "2026-07-16 15:24:26"
     }
   ],
-  "last_activity_at": "2026-07-16 12:17:25",
+  "last_activity_at": "2026-07-16 15:24:27",
   "last_report_date": "2026-07-15",
   "last_error_sig": "RuntimeError: 잡코리아 접속 5회 모두 실패(사이트 접근 불가)",
   "last_error_at": "2026-07-15 12:25:06"
