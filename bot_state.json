@@ -2,14 +2,6 @@
   "report_initialized": true,
   "sent_log": [
     {
-      "company": "주식회사 피에이치코리아",
-      "at": "2026-07-16 00:39:04"
-    },
-    {
-      "company": "㈜드림텍",
-      "at": "2026-07-16 00:39:06"
-    },
-    {
       "company": "㈜한독모터스",
       "at": "2026-07-16 12:17:21"
     },
@@ -41,5 +33,5 @@
   "last_activity_at": "2026-07-17 19:04:30",
   "last_report_date": "2026-07-17",
   "last_error_sig": "RuntimeError: 잡코리아 접속 5회 모두 실패(사이트 접근 불가)",
-  "last_error_at": "2026-07-17 05:09:29"
+  "last_error_at": "2026-07-18 01:23:53"
 }
