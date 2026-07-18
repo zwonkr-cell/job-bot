@@ -1,7 +1,7 @@
 {
   "report_initialized": true,
   "sent_log": [],
-  "last_activity_at": "2026-07-18 18:38:58",
+  "last_activity_at": "2026-07-19 06:58:13",
   "last_report_date": "2026-07-18",
   "last_error_sig": "RuntimeError: 잡코리아 접속 5회 모두 실패(사이트 접근 불가)",
   "last_error_at": "2026-07-19 04:23:22"
