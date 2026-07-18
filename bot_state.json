@@ -2,24 +2,12 @@
   "report_initialized": true,
   "sent_log": [
     {
-      "company": "㈜대한솔루션",
-      "at": "2026-07-16 18:20:03"
-    },
-    {
-      "company": "㈜바로크레디트대부",
-      "at": "2026-07-16 18:20:05"
-    },
-    {
-      "company": "나이스평가정보㈜",
-      "at": "2026-07-16 18:20:08"
-    },
-    {
       "company": "테슬라코리아",
       "at": "2026-07-17 01:21:41"
     }
   ],
-  "last_activity_at": "2026-07-18 07:59:32",
-  "last_report_date": "2026-07-17",
+  "last_activity_at": "2026-07-18 18:38:58",
+  "last_report_date": "2026-07-18",
   "last_error_sig": "RuntimeError: 잡코리아 접속 5회 모두 실패(사이트 접근 불가)",
   "last_error_at": "2026-07-18 01:23:53"
 }
