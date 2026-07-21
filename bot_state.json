@@ -32,10 +32,18 @@
     {
       "company": "㈜바운스",
       "at": "2026-07-21 16:09:30"
+    },
+    {
+      "company": "㈜케이플러스홀딩스",
+      "at": "2026-07-21 19:03:03"
+    },
+    {
+      "company": "대원제약(주)",
+      "at": "2026-07-21 19:03:06"
     }
   ],
-  "last_activity_at": "2026-07-21 16:09:31",
-  "last_report_date": "2026-07-20",
+  "last_activity_at": "2026-07-21 19:03:07",
+  "last_report_date": "2026-07-21",
   "last_error_sig": "RuntimeError: 잡코리아 접속 5회 모두 실패(사이트 접근 불가)",
   "last_error_at": "2026-07-19 04:23:22",
   "transport": "direct",
