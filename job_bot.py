@@ -23,6 +23,7 @@ HEADERS = {
 
 def get_jobs():
     session = requests.Session()
+    saw_empty_200 = False
     for attempt in range(5):
         try:
             print(f"{attempt + 1}번째 접속 시도 중...")
@@ -31,6 +32,12 @@ def get_jobs():
                 soup = BeautifulSoup(response.text, 'html.parser')
                 job_list = []
                 items = soup.select('tr.devloopArea')
+                if not items:
+                    # 200 인데 목록 0건 = 리다이렉트/개편/차단 페이지 의심 (인크루트 개편 사례와 동일 패턴)
+                    saw_empty_200 = True
+                    print("응답은 200이지만 공고 목록 파싱 0건")
+                    time.sleep(10)
+                    continue
 
                 for item in items:
                     try:
@@ -54,7 +61,9 @@ def get_jobs():
         except Exception as e:
             print(f"에러: {e}")
         time.sleep(10)
-    # 5회 모두 실패 = 사이트 접속 불가 → 예외로 알려서 오류 노티되게 함
+    # 5회 모두 실패 → 예외로 알려서 오류 노티되게 함
+    if saw_empty_200:
+        raise RuntimeError("페이지 응답은 정상(200)이지만 공고를 읽지 못했습니다 - 사이트 구조 변경 의심")
     raise RuntimeError("잡코리아 접속 5회 모두 실패(사이트 접근 불가)")
 
 def send_telegram(msg):
@@ -118,17 +127,69 @@ def send_plain(text):
         except Exception as e:
             print("노티 전송 실패:", cid, e)
 
+# ── 오류 분류: (키, 이모지, 심각도, 알림까지 필요한 연속횟수, 키워드, 제목, 원인, 조치) ──
+ERROR_CATEGORIES = [
+    ("structure", "🔴", "높음 · 조치 필요", 1,
+     ["구조 변경", "파싱 0건", "attributeerror", "keyerror", "indexerror", "nonetype"],
+     "사이트 구조 변경 의심 — 공고를 읽지 못했어요",
+     "잡코리아가 페이지를 개편하면 봇이 공고 위치를 찾지 못하게 돼요.",
+     "네, 코드 수정이 필요해요. 이 알림 내용을 개발 세션(클로드)에 전달해 주세요. 수정 전까지 새 공고 알림이 중단돼요."),
+    ("blocked", "🟠", "중간 · 지켜보기", 1,
+     ["403", "forbidden", "captcha", "차단"],
+     "사이트가 접근을 차단했을 가능성",
+     "사이트가 자동 수집을 일시적으로 막았을 수 있어요.",
+     "당장 조치는 필요 없어요. 이 알림이 하루 이상 반복되면 개발 세션에 전달해 주세요."),
+    ("network", "🟡", "낮음 · 조치 불필요", 2,
+     ["접속 5회 모두 실패", "connection", "timeout", "timed out", "10054", "reset", "aborted", "urlerror"],
+     "일시적 접속 장애",
+     "서버 혼잡이나 순간적인 네트워크 문제로 가끔 발생해요.",
+     "아니요. 다음 실행에서 자동 복구되고, 놓친 공고도 그대로 알림돼요."),
+    ("state", "🟠", "중간 · 지켜보기", 1,
+     ["oserror", "permissionerror", "json.decoder", "state 저장"],
+     "기록 파일 저장/읽기 문제",
+     "공고 기록 파일을 읽거나 쓰는 데 문제가 생겼어요.",
+     "일시적일 수 있어요. 반복되면 개발 세션에 전달해 주세요."),
+]
+
+def classify_error(raw_text):
+    low = (raw_text or "").lower()
+    for key, emoji, sev, min_consec, kws, title, why, action in ERROR_CATEGORIES:
+        if any(k in low for k in kws):
+            return {"key": key, "emoji": emoji, "sev": sev, "min_consec": min_consec,
+                    "title": title, "why": why, "action": action}
+    return {"key": "unknown", "emoji": "🔴", "sev": "높음 · 조치 필요", "min_consec": 1,
+            "title": "알 수 없는 오류",
+            "why": "예상하지 못한 문제가 발생했어요.",
+            "action": "네, 확인이 필요해요. 이 알림 내용을 개발 세션(클로드)에 전달해 주세요."}
+
 def notify_error(state, raw_text):
+    """오류를 분류해 쉬운 설명으로 노티. 일시적 오류는 연속 2회부터, 같은 유형은 12h 1회."""
     raw_text = (raw_text or "").strip() or "알 수 없는 오류"
-    sig = raw_text.splitlines()[-1][:120]
-    now = datetime.now(KST)
-    last_at = _parse_iso(state.get("last_error_at"))
-    if state.get("last_error_sig") == sig and last_at and (now - last_at) < timedelta(hours=ERROR_DEDUP_HOURS):
-        print("동일 오류 최근 노티됨 → 생략")
+    summary = raw_text.splitlines()[-1][:100]
+    info = classify_error(raw_text)
+    consec = state.setdefault("consec_err", {})
+    cnt = consec.get(info["key"], 0) + 1
+    consec[info["key"]] = cnt
+    if cnt < info["min_consec"]:
+        print(f"[{info['key']}] 1회성 오류 → 알림 보류(연속 {info['min_consec']}회부터 알림)")
         return
-    send_plain(f"⚠️ [{BOT_NAME}] 오류가 발생했어요 (원문):\n\n{raw_text}\n\n(발생 시각: {_now_iso()})")
-    state["last_error_sig"] = sig
-    state["last_error_at"] = _now_iso()
+    last_at = _parse_iso(state.get("err_notified_at", {}).get(info["key"]))
+    if last_at and (datetime.now(KST) - last_at) < timedelta(hours=ERROR_DEDUP_HOURS):
+        print(f"[{info['key']}] 같은 유형 최근 알림됨 → 생략(스팸 방지)")
+        return
+    consec_note = f" (연속 {cnt}회째)" if cnt >= 2 else ""
+    msg = (f"{info['emoji']} [{BOT_NAME}] 오류 알림 — 심각도: {info['sev']}\n"
+           f"\n"
+           f"■ 무슨 오류인가요?\n{info['title']}{consec_note}\n"
+           f"\n"
+           f"■ 왜 발생하나요?\n{info['why']}\n"
+           f"\n"
+           f"■ 조치가 필요한가요?\n{info['action']}\n"
+           f"\n"
+           f"(참고: {summary})\n"
+           f"(발생 시각: {_now_iso()})")
+    send_plain(msg)
+    state.setdefault("err_notified_at", {})[info["key"]] = _now_iso()
 
 def maybe_heartbeat(state, collected, new_count):
     now = datetime.now(KST)
@@ -231,6 +292,8 @@ if __name__ == "__main__":
             f.write("\n".join((new_id_list + processed_ids)[:200]))
         print(f"완료: 수집완료 {len(jobs)}건, 신규후보 {new_count}건 발송 시도됨")
 
+        state["consec_err"] = {}   # 성공 → 연속 오류 카운터 리셋
+
         # 활동 기록 / 12시간 무신규 하트비트
         if new_count > 0:
             state["last_activity_at"] = _now_iso()
@@ -239,6 +302,6 @@ if __name__ == "__main__":
     except Exception:
         tb = traceback.format_exc()
         print(tb)
-        notify_error(state, tb)   # 오류 원문을 텔레그램으로 노티(같은 오류는 12h 1회)
+        notify_error(state, tb)   # 분류된 쉬운 설명으로 노티(원문은 로그에만)
     finally:
         save_state(state)
