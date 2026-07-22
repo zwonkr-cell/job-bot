@@ -43,6 +43,17 @@ def get_kr_proxy_candidates():
             print("프록시 목록 수집 실패:", e)
     return list(dict.fromkeys(cands))
 
+PROVINCES = ("서울", "경기", "인천", "부산", "대구", "광주", "대전", "울산", "세종",
+             "강원", "충북", "충남", "전북", "전남", "경북", "경남", "제주", "전국", "해외")
+
+def _extract_location(item):
+    """공고 행에서 근무지역 셀(시/도명으로 시작)만 골라 추출."""
+    for c in item.select('.tplTit .cell'):
+        txt = re.sub(r'\s+', ' ', c.get_text(" ", strip=True).replace(">", " ")).strip()
+        if txt.startswith(PROVINCES):
+            return txt
+    return ""
+
 def _parse_jobs(html_text):
     soup = BeautifulSoup(html_text, 'html.parser')
     job_list = []
@@ -54,11 +65,13 @@ def _parse_jobs(html_text):
             title_tag = item.select_one('.tplTit .titBx strong a')
             title = title_tag.get_text(strip=True)
             link = "https://www.jobkorea.co.kr" + title_tag['href']
+            location = _extract_location(item)
             deadline = item.select_one('.odd .date.dotum').get_text(strip=True)
             reg_time_tag = item.select_one('.odd .time.dotum')
             reg_time = reg_time_tag.get_text(strip=True) if reg_time_tag else "정보 없음"
             job_list.append({
-                'id': job_id, 'company': company, 'title': title, 'link': link, 'deadline': deadline, 'reg_time': reg_time
+                'id': job_id, 'company': company, 'location': location, 'title': title,
+                'link': link, 'deadline': deadline, 'reg_time': reg_time
             })
         except: continue
     return job_list
@@ -374,6 +387,7 @@ if __name__ == "__main__":
                     "bot": "잡코리아",
                     "scraped_at": _now_iso(),
                     "company": job['company'],
+                    "region": job.get('location', ''),
                     "title": job['title'],
                     "link": job['link'],
                     "deadline": job['deadline'],
