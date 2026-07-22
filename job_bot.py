@@ -368,13 +368,15 @@ if __name__ == "__main__":
                 # 공고명/회사명에 <, >, & 가 있어도 메시지가 깨지지 않도록 이스케이프
                 c = html.escape(job['company'])
                 t = html.escape(job['title'])
+                loc = html.escape(job.get('location', ''))
                 lk = html.escape(job['link'])
                 dl = html.escape(job['deadline'])
                 rt = html.escape(job['reg_time'])
+                comp_line = f"• {c}({loc})" if loc else f"• {c}"
                 # HTML 태그를 사용한 깔끔한 포맷
                 message = (
                     f"<b>{c}</b> - <b>{t}</b>\n\n"
-                    f"• {c}\n"
+                    f"{comp_line}\n"
                     f"• <a href='{lk}'><b>{t}</b></a>\n\n"
                     f"⏳ {dl}\n"
                     f"본 공고는 {rt}됐어요"
