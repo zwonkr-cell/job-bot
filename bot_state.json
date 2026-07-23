@@ -54,7 +54,7 @@
   "last_report_date": "2026-07-22",
   "last_error_sig": "RuntimeError: 잡코리아 접속 5회 모두 실패(사이트 접근 불가)",
   "last_error_at": "2026-07-19 04:23:22",
-  "transport": "proxy:1.231.81.166:3128",
+  "transport": "direct",
   "consec_err": {},
   "proxy_notice_at": "2026-07-23 08:32:27",
   "last_proxy": "1.231.81.166:3128"
