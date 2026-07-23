@@ -2,18 +2,6 @@
   "report_initialized": true,
   "sent_log": [
     {
-      "company": "㈜로지스밸리비앤에프",
-      "at": "2026-07-21 16:09:26"
-    },
-    {
-      "company": "인트로맨㈜",
-      "at": "2026-07-21 16:09:28"
-    },
-    {
-      "company": "㈜바운스",
-      "at": "2026-07-21 16:09:30"
-    },
-    {
       "company": "㈜케이플러스홀딩스",
       "at": "2026-07-21 19:03:03"
     },
@@ -52,13 +40,17 @@
     {
       "company": "㈜피씨디렉트",
       "at": "2026-07-23 15:09:23"
+    },
+    {
+      "company": "티케이지솔믹스㈜",
+      "at": "2026-07-23 18:08:09"
     }
   ],
-  "last_activity_at": "2026-07-23 15:09:26",
-  "last_report_date": "2026-07-22",
+  "last_activity_at": "2026-07-23 18:08:13",
+  "last_report_date": "2026-07-23",
   "last_error_sig": "RuntimeError: 잡코리아 접속 5회 모두 실패(사이트 접근 불가)",
   "last_error_at": "2026-07-19 04:23:22",
-  "transport": "proxy:1.231.81.166:3128",
+  "transport": "direct",
   "consec_err": {},
   "proxy_notice_at": "2026-07-23 15:09:22",
   "last_proxy": "1.231.81.166:3128"
