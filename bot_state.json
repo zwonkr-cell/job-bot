@@ -2,14 +2,6 @@
   "report_initialized": true,
   "sent_log": [
     {
-      "company": "㈜에즈금융서비스",
-      "at": "2026-07-22 17:32:52"
-    },
-    {
-      "company": "㈜청담글로벌",
-      "at": "2026-07-22 17:32:54"
-    },
-    {
       "company": "㈜에코마케팅",
       "at": "2026-07-22 20:13:55"
     },
@@ -44,10 +36,14 @@
     {
       "company": "한화에너지㈜",
       "at": "2026-07-24 17:30:57"
+    },
+    {
+      "company": "㈜경동나비엔",
+      "at": "2026-07-24 20:04:42"
     }
   ],
-  "last_activity_at": "2026-07-24 17:31:01",
-  "last_report_date": "2026-07-23",
+  "last_activity_at": "2026-07-24 20:04:46",
+  "last_report_date": "2026-07-24",
   "last_error_sig": "RuntimeError: 잡코리아 접속 5회 모두 실패(사이트 접근 불가)",
   "last_error_at": "2026-07-19 04:23:22",
   "transport": "direct",
