@@ -46,8 +46,8 @@
       "at": "2026-07-28 14:49:04"
     }
   ],
-  "last_activity_at": "2026-07-28 14:49:09",
-  "last_report_date": "2026-07-27",
+  "last_activity_at": "2026-07-28 20:20:10",
+  "last_report_date": "2026-07-28",
   "last_error_sig": "RuntimeError: 잡코리아 접속 5회 모두 실패(사이트 접근 불가)",
   "last_error_at": "2026-07-19 04:23:22",
   "transport": "direct",
