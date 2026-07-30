@@ -40,10 +40,14 @@
     {
       "company": "㈜인성",
       "at": "2026-07-30 17:30:39"
+    },
+    {
+      "company": "엠비엔미디어텍",
+      "at": "2026-07-30 20:09:26"
     }
   ],
-  "last_activity_at": "2026-07-30 17:30:42",
-  "last_report_date": "2026-07-29",
+  "last_activity_at": "2026-07-30 20:09:30",
+  "last_report_date": "2026-07-30",
   "last_error_sig": "RuntimeError: 잡코리아 접속 5회 모두 실패(사이트 접근 불가)",
   "last_error_at": "2026-07-19 04:23:22",
   "transport": "direct",
