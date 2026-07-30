@@ -2,10 +2,6 @@
   "report_initialized": true,
   "sent_log": [
     {
-      "company": "루이비통코리아",
-      "at": "2026-07-28 14:49:04"
-    },
-    {
       "company": "(주)에스피지",
       "at": "2026-07-29 00:59:56"
     },
@@ -40,9 +36,13 @@
     {
       "company": "동국제약㈜",
       "at": "2026-07-30 00:45:46"
+    },
+    {
+      "company": "㈜인성",
+      "at": "2026-07-30 17:30:39"
     }
   ],
-  "last_activity_at": "2026-07-30 14:43:48",
+  "last_activity_at": "2026-07-30 17:30:42",
   "last_report_date": "2026-07-29",
   "last_error_sig": "RuntimeError: 잡코리아 접속 5회 모두 실패(사이트 접근 불가)",
   "last_error_at": "2026-07-19 04:23:22",
