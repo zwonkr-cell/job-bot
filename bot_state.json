@@ -48,10 +48,18 @@
     {
       "company": "(주)섹타나인",
       "at": "2026-07-31 15:30:02"
+    },
+    {
+      "company": "㈜아이넷뱅크",
+      "at": "2026-07-31 18:26:45"
+    },
+    {
+      "company": "㈜바운스",
+      "at": "2026-07-31 18:26:50"
     }
   ],
-  "last_activity_at": "2026-07-31 15:30:06",
-  "last_report_date": "2026-07-30",
+  "last_activity_at": "2026-07-31 18:26:54",
+  "last_report_date": "2026-07-31",
   "last_error_sig": "RuntimeError: 잡코리아 접속 5회 모두 실패(사이트 접근 불가)",
   "last_error_at": "2026-07-19 04:23:22",
   "transport": "direct",
