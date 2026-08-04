@@ -60,14 +60,18 @@
     {
       "company": "㈜케이티씨에스",
       "at": "2026-08-04 17:40:28"
+    },
+    {
+      "company": "케이투코리아㈜",
+      "at": "2026-08-05 01:11:02"
     }
   ],
-  "last_activity_at": "2026-08-04 20:25:21",
+  "last_activity_at": "2026-08-05 01:11:06",
   "last_report_date": "2026-08-04",
   "last_error_sig": "RuntimeError: 잡코리아 접속 5회 모두 실패(사이트 접근 불가)",
   "last_error_at": "2026-07-19 04:23:22",
-  "transport": "direct",
+  "transport": "proxy:1.231.81.166:3128",
   "consec_err": {},
-  "proxy_notice_at": "2026-08-04 22:18:33",
+  "proxy_notice_at": "2026-08-05 01:11:01",
   "last_proxy": "1.231.81.166:3128"
 }
